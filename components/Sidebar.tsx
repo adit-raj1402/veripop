@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { LESSONS } from '../constants';
 import { Lesson, LessonCategory } from '../types';
-import { BookOpen, Cpu, Layers, Activity, Zap } from 'lucide-react';
+import { BookOpen, Cpu, Layers, Activity, Zap, Box, GitBranch, Code2 } from 'lucide-react';
 
 interface SidebarProps {
   currentLessonId: string | null;
@@ -13,8 +14,12 @@ interface SidebarProps {
 const CategoryIcon = ({ category }: { category: LessonCategory }) => {
   switch (category) {
     case LessonCategory.GETTING_STARTED: return <Zap size={16} className="text-pop-yellow" />;
+    case LessonCategory.VERILOG_LANG: return <Code2 size={16} className="text-slate-400" />;
     case LessonCategory.GATES: return <Cpu size={16} className="text-pop-pink" />;
     case LessonCategory.VECTORS: return <Layers size={16} className="text-pop-blue" />;
+    case LessonCategory.MODULES: return <Box size={16} className="text-pop-purple" />;
+    case LessonCategory.PROCEDURES: return <GitBranch size={16} className="text-emerald-400" />;
+    case LessonCategory.MORE_FEATURES: return <Code2 size={16} className="text-orange-400" />;
     case LessonCategory.SEQUENTIAL: return <Activity size={16} className="text-pop-green" />;
     default: return <BookOpen size={16} />;
   }
@@ -27,6 +32,18 @@ const Sidebar: React.FC<SidebarProps> = ({ currentLessonId, onSelectLesson, isOp
     acc[lesson.category].push(lesson);
     return acc;
   }, {} as Record<LessonCategory, Lesson[]>);
+
+  // Define a custom sort order for categories
+  const categoryOrder = [
+    LessonCategory.GETTING_STARTED,
+    LessonCategory.VERILOG_LANG,
+    LessonCategory.GATES,
+    LessonCategory.VECTORS,
+    LessonCategory.MODULES,
+    LessonCategory.PROCEDURES,
+    LessonCategory.MORE_FEATURES,
+    LessonCategory.SEQUENTIAL
+  ];
 
   return (
     <>
@@ -52,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentLessonId, onSelectLesson, isOp
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-8">
-          {(Object.keys(groupedLessons) as LessonCategory[]).map((category) => (
+          {categoryOrder.filter(cat => groupedLessons[cat]).map((category) => (
             <div key={category}>
               <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2 ml-2">
                 <CategoryIcon category={category} />

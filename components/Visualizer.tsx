@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface VisualizerProps {
@@ -8,10 +9,10 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
   // Styles
   const strokeColor = "#4ECDC4"; // pop-blue
   const secondaryColor = "#FFE66D"; // pop-yellow (neon accent)
+  const thirdColor = "#FF6B97"; // pop-pink
   const strokeWidth = 3;
   const glowFilter = "drop-shadow(0 0 4px #4ECDC4)";
-  const glowYellow = "drop-shadow(0 0 4px #FFE66D)";
-
+  
   const renderContent = () => {
     switch (type) {
       case 'chip_intro':
@@ -128,6 +129,39 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
           </svg>
         );
 
+      case 'or_gate':
+        return (
+          <svg viewBox="0 0 400 200" className="w-full h-full">
+            <path d="M 100 70 L 160 70" stroke={strokeColor} strokeWidth={strokeWidth} />
+            <path d="M 100 130 L 160 130" stroke={strokeColor} strokeWidth={strokeWidth} />
+            
+            {/* Concave input, Pointed output */}
+            <path d="M 150 40 C 170 70 170 130 150 160 C 250 160 280 100 280 100 C 280 100 250 40 150 40 Z" fill="none" stroke={strokeColor} strokeWidth={strokeWidth} style={{filter: glowFilter}} />
+            
+            <path d="M 280 100 L 360 100" stroke={strokeColor} strokeWidth={strokeWidth} />
+            <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
+            <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
+            <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">OR</text>
+          </svg>
+        );
+
+      case 'nand_gate':
+        return (
+          <svg viewBox="0 0 400 200" className="w-full h-full">
+            <path d="M 100 70 L 180 70" stroke={strokeColor} strokeWidth={strokeWidth} />
+            <path d="M 100 130 L 180 130" stroke={strokeColor} strokeWidth={strokeWidth} />
+            {/* AND Body */}
+            <path d="M 180 40 L 180 160 C 260 160 280 100 280 100 C 280 100 260 40 180 40 Z" fill="none" stroke={strokeColor} strokeWidth={strokeWidth} style={{filter: glowFilter}} />
+            {/* Bubble */}
+            <circle cx="290" cy="100" r="10" fill="none" stroke={strokeColor} strokeWidth={strokeWidth} />
+            <path d="M 300 100 L 360 100" stroke={strokeColor} strokeWidth={strokeWidth} />
+            
+            <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
+            <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
+            <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">NAND</text>
+          </svg>
+        );
+
       case 'nor_gate':
         return (
           <svg viewBox="0 0 400 200" className="w-full h-full">
@@ -139,6 +173,24 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
             <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
             <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">NOR</text>
+          </svg>
+        );
+
+      case 'xor_gate':
+        return (
+          <svg viewBox="0 0 400 200" className="w-full h-full">
+            <path d="M 100 70 L 160 70" stroke={strokeColor} strokeWidth={strokeWidth} />
+            <path d="M 100 130 L 160 130" stroke={strokeColor} strokeWidth={strokeWidth} />
+            
+            {/* First Curve (Input) */}
+            <path d="M 150 40 C 170 70 170 130 150 160" fill="none" stroke={strokeColor} strokeWidth={strokeWidth} />
+            {/* Second Curve (Body) */}
+            <path d="M 160 40 C 180 70 180 130 160 160 C 260 160 290 100 290 100 C 290 100 260 40 160 40" fill="none" stroke={strokeColor} strokeWidth={strokeWidth} style={{filter: glowFilter}} />
+            
+            <path d="M 290 100 L 360 100" stroke={strokeColor} strokeWidth={strokeWidth} />
+            <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
+            <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
+            <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">XOR</text>
           </svg>
         );
         
@@ -252,48 +304,136 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             {/* Splitting */}
             <path d="M 150 100 C 200 100 200 60 250 60" fill="none" stroke={strokeColor} strokeWidth="4" />
             <path d="M 150 100 C 200 100 200 140 250 140" fill="none" stroke={strokeColor} strokeWidth="4" />
-
-            {/* Output Busses */}
-            <path d="M 250 60 L 350 60" stroke={strokeColor} strokeWidth="4" />
-            <path d="M 250 140 L 350 140" stroke={strokeColor} strokeWidth="4" />
             
-            <text x="300" y="50" fill="#fff" fontSize="10" textAnchor="middle">[15:8] (High)</text>
-            <text x="300" y="130" fill="#fff" fontSize="10" textAnchor="middle">[7:0] (Low)</text>
+            {/* Outputs */}
+            <path d="M 250 60 L 350 60" stroke={strokeColor} strokeWidth="4" />
+            <text x="360" y="65" fill="#94a3b8" className="font-mono text-xs">Hi</text>
+            
+            <path d="M 250 140 L 350 140" stroke={strokeColor} strokeWidth="4" />
+            <text x="360" y="145" fill="#94a3b8" className="font-mono text-xs">Lo</text>
           </svg>
         );
 
       case 'vector_concat':
         return (
-          <svg viewBox="0 0 400 200" className="w-full h-full">
+           <svg viewBox="0 0 400 200" className="w-full h-full">
             {/* Inputs */}
-            <path d="M 50 60 L 150 60" stroke={strokeColor} strokeWidth="2" />
-            <text x="40" y="65" fill="#fff" fontSize="10" textAnchor="end">A[0]</text>
+            <path d="M 50 60 L 150 60" stroke={thirdColor} strokeWidth="4" />
+            <text x="40" y="65" fill={thirdColor} className="font-mono text-xs" textAnchor="end">a[4:0]</text>
             
-            <path d="M 50 100 L 150 100" stroke={strokeColor} strokeWidth="2" />
-            <text x="40" y="105" fill="#fff" fontSize="10" textAnchor="end">B[0]</text>
+            <path d="M 50 140 L 150 140" stroke={secondaryColor} strokeWidth="4" />
+            <text x="40" y="145" fill={secondaryColor} className="font-mono text-xs" textAnchor="end">b[4:0]</text>
 
-            <path d="M 50 140 L 150 140" stroke={strokeColor} strokeWidth="2" />
-            <text x="40" y="145" fill="#fff" fontSize="10" textAnchor="end">C[0]</text>
-
-            {/* Merge */}
-            <path d="M 150 60 C 200 60 200 100 250 100" fill="none" stroke={strokeColor} strokeWidth="2" />
-            <path d="M 150 100 L 250 100" fill="none" stroke={strokeColor} strokeWidth="2" />
-            <path d="M 150 140 C 200 140 200 100 250 100" fill="none" stroke={strokeColor} strokeWidth="2" />
+            {/* Merging */}
+            <path d="M 150 60 C 200 60 200 100 250 100" fill="none" stroke={thirdColor} strokeWidth="4" />
+            <path d="M 150 140 C 200 140 200 100 250 100" fill="none" stroke={secondaryColor} strokeWidth="4" />
             
             {/* Result Bus */}
-            <path d="M 250 100 L 350 100" stroke={strokeColor} strokeWidth="6" />
-            <text x="300" y="90" fill={secondaryColor} fontSize="12" textAnchor="middle">{`{A,B,C}`}</text>
+            <path d="M 250 100 L 350 100" stroke={strokeColor} strokeWidth="8" style={{filter: glowFilter}} />
+            <line x1="290" y1="110" x2="310" y2="90" stroke="#fff" strokeWidth="3" />
+            <text x="315" y="85" fill="#fff" fontSize="12">10</text>
+            <text x="300" y="130" fill="#fff" textAnchor="middle" className="font-mono text-xs">{`{a, b}`}</text>
+          </svg>
+        );
+
+      case 'module_hierarchy':
+        return (
+          <svg viewBox="0 0 400 200" className="w-full h-full">
+             {/* Top Module */}
+             <rect x="20" y="20" width="360" height="160" rx="8" fill="none" stroke="#64748b" strokeWidth="2" strokeDasharray="5 5" />
+             <text x="40" y="45" fill="#64748b" className="font-mono text-xs font-bold">top_module</text>
+             
+             {/* Sub Module */}
+             <rect x="120" y="60" width="160" height="80" rx="4" fill="#1e293b" stroke={strokeColor} strokeWidth="3" style={{filter: glowFilter}} />
+             <text x="200" y="105" fill="#fff" textAnchor="middle" className="font-mono">mod_a</text>
+             
+             {/* Connections */}
+             <path d="M 20 80 L 120 80" stroke={secondaryColor} strokeWidth="2" />
+             <text x="70" y="75" fill={secondaryColor} className="font-mono text-xs" textAnchor="middle">wire1</text>
+             
+             <path d="M 280 100 L 380 100" stroke={strokeColor} strokeWidth="2" />
+             <text x="330" y="95" fill={strokeColor} className="font-mono text-xs" textAnchor="middle">out</text>
+          </svg>
+        );
+
+      case 'always_block':
+        return (
+          <svg viewBox="0 0 400 200" className="w-full h-full">
+            {/* Logic Cloud */}
+            <path d="M 150 50 Q 200 20 250 50 Q 300 50 320 80 Q 350 120 300 150 Q 250 180 200 150 Q 150 170 120 130 Q 80 100 150 50" 
+                  fill="#1e293b" stroke={secondaryColor} strokeWidth="2" style={{filter: glowFilter}} />
+            
+            <text x="220" y="100" fill={secondaryColor} textAnchor="middle" className="font-mono font-bold">LOGIC</text>
+            <text x="220" y="120" fill="#fff" textAnchor="middle" className="font-mono text-xs">always @(*)</text>
+            
+            {/* Inputs */}
+            <path d="M 50 80 L 130 90" stroke={strokeColor} strokeWidth="2" />
+            <path d="M 50 120 L 130 110" stroke={strokeColor} strokeWidth="2" />
+            
+            {/* Trigger Symbol */}
+            <text x="80" y="60" fill={secondaryColor} className="font-mono text-xs">Trigger!</text>
+            <path d="M 90 70 L 110 90" stroke={secondaryColor} strokeWidth="1" strokeDasharray="2 2" />
+          </svg>
+        );
+
+      case 'mux_2to1':
+        return (
+          <svg viewBox="0 0 400 200" className="w-full h-full">
+             {/* Mux Trapezoid */}
+             <path d="M 150 40 L 250 60 L 250 140 L 150 160 Z" fill="#1e293b" stroke={strokeColor} strokeWidth="3" style={{filter: glowFilter}} />
+             <text x="200" y="105" fill="#fff" textAnchor="middle" className="font-mono font-bold">MUX</text>
+             
+             {/* Inputs */}
+             <path d="M 50 60 L 150 60" stroke="#94a3b8" strokeWidth="2" />
+             <text x="140" y="55" fill="#94a3b8" textAnchor="end" className="font-mono text-xs">0 (False)</text>
+             
+             <path d="M 50 140 L 150 140" stroke="#94a3b8" strokeWidth="2" />
+             <text x="140" y="135" fill="#94a3b8" textAnchor="end" className="font-mono text-xs">1 (True)</text>
+             
+             {/* Select Line */}
+             <path d="M 200 180 L 200 150" stroke={secondaryColor} strokeWidth="2" />
+             <text x="200" y="195" fill={secondaryColor} textAnchor="middle" className="font-mono text-xs">sel</text>
+             
+             {/* Output */}
+             <path d="M 250 100 L 350 100" stroke={strokeColor} strokeWidth="3" />
+          </svg>
+        );
+
+      case 'reduction_gate':
+        return (
+          <svg viewBox="0 0 400 200" className="w-full h-full">
+            {/* Wide Input Bus */}
+            <path d="M 50 100 L 140 100" stroke={strokeColor} strokeWidth="8" />
+            <line x1="80" y1="110" x2="100" y2="90" stroke="#fff" strokeWidth="2" />
+            <text x="90" y="85" fill="#fff" textAnchor="middle" fontSize="12">8</text>
+
+            {/* Big XOR Gate */}
+             <path d="M 140 40 C 160 70 160 130 140 160" fill="none" stroke={strokeColor} strokeWidth="2" />
+             <path d="M 150 40 C 170 70 170 130 150 160 C 230 160 270 100 270 100 C 270 100 230 40 150 40" fill="#1e293b" stroke={strokeColor} strokeWidth="3" style={{filter: glowFilter}} />
+             
+             <text x="210" y="105" fill={secondaryColor} textAnchor="middle" className="font-bold">^</text>
+             
+             {/* Single Output */}
+             <path d="M 270 100 L 350 100" stroke={strokeColor} strokeWidth="2" />
+             <text x="350" y="90" fill={strokeColor} textAnchor="end" className="font-mono text-xs">1 bit</text>
           </svg>
         );
 
       default:
-        return <div className="text-white">No visualization</div>;
+        return (
+          <div className="w-full h-full flex items-center justify-center text-slate-600 font-mono text-xs">
+            Visualization Placeholder: {type}
+          </div>
+        );
     }
   };
 
   return (
-    <div className="w-full aspect-[2/1] bg-slate-900/50 rounded-xl border border-slate-700/50 flex items-center justify-center overflow-hidden p-4 select-none">
-      {renderContent()}
+    <div className="w-full h-48 md:h-64 bg-slate-900 rounded-xl overflow-hidden relative border border-slate-800">
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+      <div className="absolute inset-0 p-4 flex items-center justify-center">
+        {renderContent()}
+      </div>
     </div>
   );
 };

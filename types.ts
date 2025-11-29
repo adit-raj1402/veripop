@@ -1,9 +1,12 @@
+
 export enum LessonCategory {
   GETTING_STARTED = 'Getting Started',
-  VERILOG_LANG = 'Verilog Language',
+  VERILOG_LANG = 'Verilog Language Basics',
   GATES = 'Logic Gates',
   VECTORS = 'Vectors',
-  MODULES = 'Modules',
+  MODULES = 'Modules: Hierarchy',
+  PROCEDURES = 'Procedures',
+  MORE_FEATURES = 'More Features',
   SEQUENTIAL = 'Sequential Logic',
 }
 

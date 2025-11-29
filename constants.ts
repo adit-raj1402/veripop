@@ -1,3 +1,4 @@
+
 import { Lesson, LessonCategory } from './types';
 
 export const LESSONS: Lesson[] = [
@@ -55,7 +56,7 @@ endmodule`,
 endmodule`
   },
 
-  // --- Verilog Language ---
+  // --- Verilog Language Basics ---
   {
     id: 'wire',
     title: 'Simple Wire',
@@ -199,6 +200,10 @@ endmodule`
     theory: `### Digital Logic Deep Dive
 The **AND gate** outputs 1 only if **all** inputs are 1.
 It is the logical intersection.
+0 & 0 = 0
+0 & 1 = 0
+1 & 0 = 0
+1 & 1 = 1
 
 ### Verilog Implementation
 *   **\`&\`** is the bitwise AND operator.
@@ -210,6 +215,52 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*a\\s*&\\s*b',
     solutionCode: `module top_module( input a, input b, output out );
     assign out = a & b;
+endmodule`
+  },
+  {
+    id: 'nand_gate',
+    title: 'NAND Gate',
+    category: LessonCategory.GATES,
+    theory: `### Digital Logic Deep Dive
+The **NAND gate** (Not-AND) is the exact opposite of AND.
+It outputs 0 only when **all** inputs are 1.
+NAND gates are "universal gates"—you can build any computer using only NAND gates!
+
+### Verilog Implementation
+*   **\`&\`** is AND.
+*   **\`~\`** is NOT.
+*   Combine them: \`assign out = ~(a & b);\``,
+    visualDescription: 'nand_gate',
+    initialCode: `module top_module( input a, input b, output out );
+    
+endmodule`,
+    solutionPattern: 'assign\\s+out\\s*=\\s*~\\s*\\(?\\s*a\\s*&\\s*b\\s*\\)?',
+    solutionCode: `module top_module( input a, input b, output out );
+    assign out = ~(a & b);
+endmodule`
+  },
+  {
+    id: 'or_gate',
+    title: 'OR Gate',
+    category: LessonCategory.GATES,
+    theory: `### Digital Logic Deep Dive
+The **OR gate** outputs 1 if **at least one** input is 1.
+It is the logical union.
+0 | 0 = 0
+0 | 1 = 1
+1 | 0 = 1
+1 | 1 = 1
+
+### Verilog Implementation
+*   **\`|\`** is the bitwise OR operator.
+*   \`assign out = a | b;\``,
+    visualDescription: 'or_gate',
+    initialCode: `module top_module( input a, input b, output out );
+    
+endmodule`,
+    solutionPattern: 'assign\\s+out\\s*=\\s*a\\s*\\|\\s*b',
+    solutionCode: `module top_module( input a, input b, output out );
+    assign out = a | b;
 endmodule`
   },
   {
@@ -235,11 +286,33 @@ endmodule`,
 endmodule`
   },
   {
+    id: 'xor_gate',
+    title: 'XOR Gate',
+    category: LessonCategory.GATES,
+    theory: `### Digital Logic Deep Dive
+The **XOR gate** (Exclusive-OR) checks for **difference**.
+*   If inputs are different (0,1 or 1,0) -> Output 1.
+*   If inputs are same (0,0 or 1,1) -> Output 0.
+It is widely used in adders (calculating the sum bit) and cryptography.
+
+### Verilog Implementation
+*   **\`^\`** is the bitwise XOR operator.
+*   \`assign out = a ^ b;\``,
+    visualDescription: 'xor_gate',
+    initialCode: `module top_module( input a, input b, output out );
+    
+endmodule`,
+    solutionPattern: 'assign\\s+out\\s*=\\s*a\\s*\\^\\s*b',
+    solutionCode: `module top_module( input a, input b, output out );
+    assign out = a ^ b;
+endmodule`
+  },
+  {
     id: 'xnor_gate',
     title: 'XNOR Gate',
     category: LessonCategory.GATES,
     theory: `### Digital Logic Deep Dive
-The **XNOR gate** (Exclusive-NOR) is the "Equality Detector".
+The **XNOR gate** (Exclusive-OR) is the "Equality Detector".
 *   If inputs are **same** (00 or 11) -> Output is **1**.
 *   If inputs are **different** (01 or 10) -> Output is **0**.
 
@@ -396,6 +469,259 @@ endmodule`,
     output [9:0] out
 );
     assign out = {a, b};
+endmodule`
+  },
+
+  // --- Modules ---
+  {
+    id: 'modules_intro',
+    title: 'Connecting Modules',
+    category: LessonCategory.MODULES,
+    theory: `### Digital Logic Deep Dive
+Complex chips are built by connecting smaller modules together. This is "Hierarchy".
+Imagine you have a pre-built chip called \`mod_a\`. To use it in your design, you must **instantiate** it (like creating an Object in Java/Python).
+You then connect wires to its ports.
+
+### Verilog Implementation
+You can connect ports by **Position** (like function arguments in C):
+\`mod_a instance_name ( wire1, wire2, wire3 );\`
+The order must match the definition of \`mod_a\` exactly.`,
+    visualDescription: 'module_hierarchy',
+    initialCode: `module top_module( input a, input b, output out );
+    // We have a hidden module defined as:
+    // module mod_a ( input in1, input in2, output out );
+    
+    // Instantiate mod_a and connect:
+    // a -> in1
+    // b -> in2
+    // out -> out
+    
+endmodule`,
+    solutionPattern: 'mod_a',
+    solutionCode: `module top_module( input a, input b, output out );
+    mod_a instance1 ( a, b, out );
+endmodule`
+  },
+  {
+    id: 'modules_name',
+    title: 'Modules by Name',
+    category: LessonCategory.MODULES,
+    theory: `### Digital Logic Deep Dive
+Connecting by position is risky. If someone changes the module definition, your connections break!
+The professional way is **Connecting by Name**.
+You explicitly say which port gets which wire.
+
+### Verilog Implementation
+Syntax: \`.port_name(signal_name)\`
+\`\`\`verilog
+mod_a instance1 ( 
+    .in1(a), 
+    .in2(b), 
+    .out(out) 
+);
+\`\`\`
+The order doesn't matter anymore!`,
+    visualDescription: 'module_hierarchy',
+    initialCode: `module top_module( input a, input b, output out );
+    // module mod_a ( output out, input in1, input in2 );
+    // Note: The definition order is weird (out first). 
+    // Use named connection to be safe!
+    
+endmodule`,
+    solutionPattern: '.out\\(',
+    solutionCode: `module top_module( input a, input b, output out );
+    mod_a instance1 ( 
+        .out(out), 
+        .in1(a), 
+        .in2(b) 
+    );
+endmodule`
+  },
+
+  // --- Procedures ---
+  {
+    id: 'always_comb',
+    title: 'Always Blocks (Comb)',
+    category: LessonCategory.PROCEDURES,
+    theory: `### Digital Logic Deep Dive
+Thus far, we used \`assign\` for logic.
+But Verilog also has **Procedural Blocks** which look like C code (if/else).
+For combinational logic (gates), we use \`always @(*)\`.
+The \`*\` means "trigger whenever ANY input changes".
+
+### Verilog Implementation
+*   Inside \`always\`, use \`=\` for assignment.
+*   Variables on the left must be declared as \`reg\` (even though they aren't real hardware registers here).
+\`\`\`verilog
+reg y;
+always @(*) begin
+    y = a & b;
+end
+\`\`\``,
+    visualDescription: 'always_block',
+    initialCode: `module top_module( input a, input b, output reg out );
+    // Use an always block to implement AND logic
+    
+endmodule`,
+    solutionPattern: 'always\\s*@\\(\\*\\)',
+    solutionCode: `module top_module( input a, input b, output reg out );
+    always @(*) begin
+        out = a & b;
+    end
+endmodule`
+  },
+  {
+    id: 'if_statement',
+    title: 'If Statement',
+    category: LessonCategory.PROCEDURES,
+    theory: `### Digital Logic Deep Dive
+The \`if\` statement creates a Multiplexer (Mux).
+If condition is true, pass Signal A. Else, pass Signal B.
+**Critical Rule**: In combinational logic, you MUST have an \`else\`. If you miss it, you create a "Latch" (unwanted memory).
+
+### Verilog Implementation
+\`\`\`verilog
+always @(*) begin
+    if (condition) begin
+        out = a;
+    end else begin
+        out = b;
+    end
+end
+\`\`\``,
+    visualDescription: 'mux_2to1',
+    initialCode: `module top_module( 
+    input a, input b, 
+    input sel_b,
+    output reg out 
+);
+    // If sel_b is 1, output b. Otherwise output a.
+    
+endmodule`,
+    solutionPattern: 'if\\s*\\(',
+    solutionCode: `module top_module( 
+    input a, input b, 
+    input sel_b,
+    output reg out 
+);
+    always @(*) begin
+        if (sel_b) begin
+            out = b;
+        end else begin
+            out = a;
+        end
+    end
+endmodule`
+  },
+  {
+    id: 'case_statement',
+    title: 'Case Statement',
+    category: LessonCategory.PROCEDURES,
+    theory: `### Digital Logic Deep Dive
+The \`case\` statement is better for checking one variable against many values. It creates a large Mux.
+
+### Verilog Implementation
+\`\`\`verilog
+always @(*) begin
+    case(sel)
+        2'b00: out = a;
+        2'b01: out = b;
+        default: out = 0;
+    endcase
+end
+\`\`\`
+Always include \`default\` to avoid latches!`,
+    visualDescription: 'mux_2to1',
+    initialCode: `module top_module( 
+    input [1:0] sel, 
+    input [3:0] data0, input [3:0] data1,
+    output reg [3:0] out 
+);
+    // 0 -> data0
+    // 1 -> data1
+    // Others -> 0
+    
+endmodule`,
+    solutionPattern: 'case\\s*\\(',
+    solutionCode: `module top_module( 
+    input [1:0] sel, 
+    input [3:0] data0, input [3:0] data1,
+    output reg [3:0] out 
+);
+    always @(*) begin
+        case(sel)
+            2'b00: out = data0;
+            2'b01: out = data1;
+            default: out = 0;
+        endcase
+    end
+endmodule`
+  },
+
+  // --- More Features ---
+  {
+    id: 'conditional',
+    title: 'Conditional (Ternary)',
+    category: LessonCategory.MORE_FEATURES,
+    theory: `### Digital Logic Deep Dive
+The Conditional Operator \`? :\`, known as the **Ternary Operator**, is the most concise way to make a Mux in Verilog.
+It works exactly like C/Java/JS.
+
+### Verilog Implementation
+\`assign out = (condition) ? value_if_true : value_if_false;\`
+
+You can chain them:
+\`assign out = (c1) ? a : (c2) ? b : c;\``,
+    visualDescription: 'mux_2to1',
+    initialCode: `module top_module( 
+    input [7:0] a, input [7:0] b, input [7:0] c, input [7:0] d,
+    output [7:0] min 
+);
+    // Find the minimum of 4 numbers using ternary operators.
+    // Hint: compare a&b, c&d, then the winners.
+    wire [7:0] min_ab;
+    wire [7:0] min_cd;
+    
+endmodule`,
+    solutionPattern: '\\?',
+    solutionCode: `module top_module( 
+    input [7:0] a, input [7:0] b, input [7:0] c, input [7:0] d,
+    output [7:0] min 
+);
+    wire [7:0] min_ab;
+    wire [7:0] min_cd;
+    
+    assign min_ab = (a < b) ? a : b;
+    assign min_cd = (c < d) ? c : d;
+    assign min = (min_ab < min_cd) ? min_ab : min_cd;
+endmodule`
+  },
+  {
+    id: 'reduction',
+    title: 'Reduction Operators',
+    category: LessonCategory.MORE_FEATURES,
+    theory: `### Digital Logic Deep Dive
+Sometimes you need to AND all bits in a wide vector together (e.g., checking if *all* bits are 1).
+Instead of \`in[0] & in[1] & in[2]...\`, use **Reduction**.
+
+### Verilog Implementation
+*   **\`&in\`**: AND all bits (Returns 1 bit).
+*   **\`|in\`**: OR all bits.
+*   **\`^in\`**: XOR all bits (Parity Check).`,
+    visualDescription: 'reduction_gate',
+    initialCode: `module top_module( 
+    input [7:0] in,
+    output parity
+);
+    // Calculate parity (XOR of all bits)
+    
+endmodule`,
+    solutionPattern: 'assign\\s+parity\\s*=\\s*\\^\\s*in',
+    solutionCode: `module top_module( 
+    input [7:0] in,
+    output parity
+);
+    assign parity = ^in;
 endmodule`
   },
 
