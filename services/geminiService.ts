@@ -1,0 +1,73 @@
+import { GoogleGenAI } from "@google/genai";
+import { Lesson } from "../types";
+
+const getAIClient = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.error("API_KEY is missing");
+    return null;
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
+export const checkVerilogCode = async (lesson: Lesson, userCode: string): Promise<string> => {
+  const ai = getAIClient();
+  if (!ai) return "Error: API Key missing. Unable to verify.";
+
+  const prompt = `
+    You are an expert Verilog tutor for students. 
+    Review the following Verilog code for the lesson "${lesson.title}".
+    
+    Lesson Theory: ${lesson.theory}
+    
+    The user's code:
+    \`\`\`verilog
+    ${userCode}
+    \`\`\`
+
+    Goal: Determine if the code correctly implements the logic described.
+    
+    If it is correct:
+    1. Start with "✅ Correct!".
+    2. Briefly explain *why* it works in 1-2 sentences.
+    3. If there is a more idiomatic way, mention it gently.
+
+    If it is incorrect:
+    1. Start with "❌ Not quite.".
+    2. Explain the syntax error or logic error clearly.
+    3. Do not give the full answer immediately, give a hint.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    return response.text || "Could not generate feedback.";
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    return "Error connecting to AI tutor. Please check your connection or API key.";
+  }
+};
+
+export const explainConcept = async (topic: string, context: string): Promise<string> => {
+  const ai = getAIClient();
+  if (!ai) return "Error: API Key missing.";
+
+  const prompt = `
+    Explain the Digital Logic and Verilog concept of "${topic}" to a beginner student.
+    Context: ${context}
+    
+    Keep it fun, use analogies if possible. Keep it under 150 words.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    return response.text || "No explanation available.";
+  } catch (error) {
+    return "Failed to fetch explanation.";
+  }
+};
