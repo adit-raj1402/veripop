@@ -32,6 +32,11 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <line x1="200" y1="40" x2="200" y2="10" stroke={secondaryColor} strokeWidth="2" />
             <line x1="180" y1="10" x2="220" y2="10" stroke={secondaryColor} strokeWidth="2" />
             <text x="230" y="15" fill={secondaryColor} fontSize="10">VCC</text>
+
+            {/* Animation */}
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 280 100 L 350 100" />
+            </circle>
           </svg>
         );
 
@@ -113,6 +118,14 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="90" fill="#94a3b8" className="font-mono">In</text>
             <text x="350" y="90" fill="#94a3b8" className="font-mono">Out</text>
             <text x="200" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">NOT</text>
+
+            {/* Animation */}
+            <circle r="3" fill="#fff">
+              <animateMotion dur="1.5s" repeatCount="indefinite" path="M 100 100 L 180 100" />
+            </circle>
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion begin="0.75s" dur="1.5s" repeatCount="indefinite" path="M 280 100 L 360 100" />
+            </circle>
           </svg>
         );
 
@@ -126,6 +139,17 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
             <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
             <text x="210" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">AND</text>
+
+            {/* Animation */}
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 70 L 180 70" />
+            </circle>
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 130 L 180 130" />
+            </circle>
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 280 100 L 360 100" />
+            </circle>
           </svg>
         );
 
@@ -142,6 +166,17 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
             <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
             <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">OR</text>
+
+            {/* Animation */}
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 70 L 160 70" />
+            </circle>
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 130 L 160 130" />
+            </circle>
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 280 100 L 360 100" />
+            </circle>
           </svg>
         );
 
@@ -159,6 +194,17 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
             <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
             <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">NAND</text>
+
+            {/* Animation */}
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 70 L 180 70" />
+            </circle>
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 130 L 180 130" />
+            </circle>
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 300 100 L 360 100" />
+            </circle>
           </svg>
         );
 
@@ -173,6 +219,17 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
             <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
             <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">NOR</text>
+
+            {/* Animation */}
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 70 L 170 70" />
+            </circle>
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 130 L 170 130" />
+            </circle>
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 300 100 L 360 100" />
+            </circle>
           </svg>
         );
 
@@ -191,6 +248,17 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
             <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
             <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">XOR</text>
+
+            {/* Animation */}
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 70 L 160 70" />
+            </circle>
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 130 L 160 130" />
+            </circle>
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 290 100 L 360 100" />
+            </circle>
           </svg>
         );
         
@@ -213,6 +281,17 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="80" y="70" fill="#94a3b8" className="font-mono">A</text>
             <text x="80" y="130" fill="#94a3b8" className="font-mono">B</text>
             <text x="220" y="105" fill="#FF6B97" className="font-bold text-xs" textAnchor="middle">XNOR</text>
+
+            {/* Animation */}
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 70 L 160 70" />
+            </circle>
+            <circle r="3" fill="#fff">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M 100 130 L 160 130" />
+            </circle>
+            <circle r="3" fill={secondaryColor}>
+              <animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 300 100 L 360 100" />
+            </circle>
           </svg>
         );
 
@@ -232,6 +311,11 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
              <text x="195" y="60" textAnchor="middle" fill={secondaryColor} fontSize="10" className="font-mono">wire internal_sig</text>
              
              <path d="M 290 100 L 340 100" stroke={strokeColor} strokeWidth="2" />
+
+             {/* Animation */}
+             <circle r="3" fill={secondaryColor}>
+                <animateMotion dur="2s" repeatCount="indefinite" path="M 140 70 L 195 70 L 195 90 L 250 90" />
+             </circle>
           </svg>
         );
 
@@ -258,6 +342,14 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             
             <line x1="320" y1="80" x2="340" y2="80" stroke={secondaryColor} strokeWidth="2" />
             <text x="350" y="85" fill={secondaryColor} fontSize="12">Y</text>
+
+            {/* Simple Animation: Inputs entering, Output leaving */}
+            <circle r="2" fill="#fff"><animateMotion dur="2s" repeatCount="indefinite" path="M 60 50 L 80 50" /></circle>
+            <circle r="2" fill="#fff"><animateMotion dur="2s" repeatCount="indefinite" path="M 60 70 L 80 70" /></circle>
+            <circle r="2" fill="#fff"><animateMotion dur="2s" repeatCount="indefinite" path="M 60 90 L 80 90" /></circle>
+            <circle r="2" fill="#fff"><animateMotion dur="2s" repeatCount="indefinite" path="M 60 110 L 80 110" /></circle>
+
+            <circle r="3" fill={secondaryColor}><animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 320 80 L 340 80" /></circle>
           </svg>
         );
 
@@ -275,6 +367,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ type }) => {
             <text x="270" y="75" fill="#94a3b8" className="font-mono text-xs">Q</text>
             <text x="270" y="155" fill="#94a3b8" className="font-mono text-xs">Qn</text>
             <circle r="3" fill={secondaryColor}><animateMotion dur="2s" repeatCount="indefinite" path="M 80 150 L 150 150" /></circle>
+            {/* Data flow animation */}
+            <circle r="3" fill="#fff"><animateMotion dur="2s" repeatCount="indefinite" path="M 80 70 L 150 70" /></circle>
+            <circle r="3" fill={secondaryColor}><animateMotion begin="1s" dur="2s" repeatCount="indefinite" path="M 250 70 L 320 70" /></circle>
           </svg>
         );
 

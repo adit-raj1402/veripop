@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Lesson } from '../types';
 import CodeEditor from './CodeEditor';
-import { checkVerilogCode, explainConcept } from '../services/geminiService';
-import { Play, Lightbulb, CheckCircle, AlertTriangle, ArrowDown, Unlock } from 'lucide-react';
+import { checkVerilogCode, explainConcept, simulateCircuit } from '../services/geminiService';
+import { Play, Lightbulb, CheckCircle, AlertTriangle, ArrowDown, Unlock, Terminal, Activity } from 'lucide-react';
 import Visualizer from './Visualizer';
 
 interface LessonContentProps {
@@ -20,6 +21,11 @@ const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
   const [attempts, setAttempts] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
   
+  // Testbench & Simulation State
+  const [activeTab, setActiveTab] = useState<'design' | 'testbench'>('design');
+  const [simOutput, setSimOutput] = useState<string | null>(null);
+  const [isSimulating, setIsSimulating] = useState(false);
+
   const theoryParts = lesson.theory.split('### Verilog Implementation');
   const digitalTheory = theoryParts[0]?.replace('### Digital Logic Deep Dive', '').trim();
   const verilogTheory = theoryParts[1]?.trim();
@@ -31,28 +37,36 @@ const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
     setAiExplanation(null);
     setAttempts(0);
     setShowSolution(false);
+    setSimOutput(null);
+    setActiveTab('design');
   }, [lesson]);
 
   const handleCheck = async () => {
     setIsChecking(true);
     setFeedback("Thinking...");
-    
-    // Quick regex check before AI (optional optimization)
-    // const passedPattern = new RegExp(lesson.solutionPattern, 'i').test(code);
+    setSimOutput(null); // Clear previous sim
     
     const response = await checkVerilogCode(lesson, code);
     setFeedback(response);
     
     if (response.startsWith('✅')) {
-       // Success - Reset attempts so the solution button doesn't persist if they replay
        setAttempts(0);
        setShowSolution(false);
     } else {
-       // Failure
        setAttempts(prev => prev + 1);
     }
     
     setIsChecking(false);
+  };
+
+  const handleRunSimulation = async () => {
+    setIsSimulating(true);
+    setSimOutput("Compiling and Simulating...");
+    
+    // Switch to console view if not already visible (we will render it at bottom)
+    const response = await simulateCircuit(lesson, code);
+    setSimOutput(response);
+    setIsSimulating(false);
   };
 
   const handleExplain = async () => {
@@ -75,7 +89,6 @@ const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
           <h2 className="text-2xl md:text-3xl font-black text-white">{lesson.title}</h2>
         </div>
         
-        {/* Tutor Button in Red as requested */}
         <button 
             onClick={handleExplain}
             disabled={isExplaining}
@@ -144,7 +157,7 @@ const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: EDITOR (Follows conceptually) */}
+          {/* RIGHT COLUMN: EDITOR & SIMULATION */}
           <div className="flex flex-col h-full bg-slate-950 p-4 md:p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-4 text-slate-400">
                <div className="h-px bg-slate-800 flex-1"></div>
@@ -152,14 +165,34 @@ const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                <div className="h-px bg-slate-800 flex-1"></div>
             </div>
 
-            <div className="flex-1 flex flex-col min-h-[500px] lg:min-h-0">
-               <CodeEditor code={code} onChange={setCode} />
+            {/* Editor Tabs */}
+            <div className="flex gap-1 mb-2">
+                <button 
+                  onClick={() => setActiveTab('design')}
+                  className={`px-4 py-2 text-xs font-bold rounded-t-lg transition-colors ${activeTab === 'design' ? 'bg-slate-800 text-pop-blue' : 'bg-slate-900 text-slate-500 hover:text-slate-300'}`}
+                >
+                  top_module.v
+                </button>
+                <button 
+                  onClick={() => setActiveTab('testbench')}
+                  className={`px-4 py-2 text-xs font-bold rounded-t-lg transition-colors flex items-center gap-2 ${activeTab === 'testbench' ? 'bg-slate-800 text-pop-purple' : 'bg-slate-900 text-slate-500 hover:text-slate-300'}`}
+                >
+                  <Activity size={12} /> testbench.v
+                </button>
+            </div>
+
+            <div className="flex-1 flex flex-col min-h-[400px] lg:min-h-0 relative">
+               {activeTab === 'design' ? (
+                   <CodeEditor code={code} onChange={setCode} filename="top_module.v" />
+               ) : (
+                   <CodeEditor code={lesson.testbench} onChange={() => {}} readOnly filename="testbench.v" />
+               )}
                
                {/* Actions Bar */}
                <div className="mt-6 flex flex-col gap-4">
                  
                  {/* Feedback Area */}
-                 {feedback && (
+                 {feedback && activeTab === 'design' && (
                   <div className={`
                     p-4 rounded-xl text-sm font-mono border animate-fade-in
                     ${isSuccess 
@@ -175,9 +208,22 @@ const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                      </div>
                   </div>
                 )}
+
+                {/* Simulation Output Area */}
+                {(simOutput || isSimulating) && (
+                    <div className="bg-black rounded-xl border border-slate-700 p-4 font-mono text-xs overflow-hidden shadow-2xl animate-fade-in">
+                        <div className="flex items-center gap-2 text-slate-500 mb-2 pb-2 border-b border-slate-800">
+                            <Terminal size={14} />
+                            <span>Simulation Log</span>
+                        </div>
+                        <pre className={`whitespace-pre-wrap ${isSimulating ? 'text-yellow-400 animate-pulse' : 'text-emerald-400'}`}>
+                            {simOutput || '> Initializing simulation...'}
+                        </pre>
+                    </div>
+                )}
                 
                 {/* Solution Reveal Logic */}
-                {canShowSolution && !isSuccess && (
+                {canShowSolution && !isSuccess && activeTab === 'design' && (
                   <div className="animate-fade-in">
                     {!showSolution ? (
                         <button 
@@ -197,16 +243,27 @@ const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                   </div>
                 )}
 
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-end gap-3 pt-2">
+                  <button 
+                    onClick={handleRunSimulation}
+                    disabled={isChecking || isSimulating}
+                    className={`
+                      px-6 py-4 rounded-xl font-bold text-sm text-pop-purple border border-pop-purple/30 bg-pop-purple/10 hover:bg-pop-purple/20 transition-all flex items-center justify-center gap-2
+                      ${isSimulating ? 'opacity-50 cursor-wait' : ''}
+                    `}
+                  >
+                    <Terminal size={18} /> Run Simulation
+                  </button>
+                  
                   <button 
                     onClick={handleCheck}
-                    disabled={isChecking}
+                    disabled={isChecking || isSimulating}
                     className={`
-                      w-full md:w-auto px-8 py-4 rounded-xl font-bold text-slate-900 shadow-lg transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3
+                      flex-1 md:flex-none px-8 py-4 rounded-xl font-bold text-slate-900 shadow-lg transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3
                       ${isChecking ? 'bg-slate-700 text-slate-400 cursor-wait' : 'bg-pop-green hover:bg-emerald-300 hover:shadow-pop-green/20'}
                     `}
                   >
-                    {isChecking ? 'Verifying Logic...' : <><Play size={20} fill="currentColor" /> Submit Solution</>}
+                    {isChecking ? 'Verifying...' : <><Play size={20} fill="currentColor" /> Submit</>}
                   </button>
                 </div>
                </div>

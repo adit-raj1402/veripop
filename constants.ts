@@ -29,6 +29,18 @@ endmodule`,
     solutionPattern: 'assign\\s+one\\s*=\\s*1',
     solutionCode: `module top_module( output one );
     assign one = 1'b1;
+endmodule`,
+    testbench: `module testbench;
+  wire one;
+  top_module dut (.one(one));
+
+  initial begin
+    $monitor("Time=%0t | one=%b", $time, one);
+    #10;
+    if (one === 1'b1) $display("SUCCESS: Output is High");
+    else $display("FAILURE: Output is %b", one);
+    $finish;
+  end
 endmodule`
   },
   {
@@ -53,6 +65,18 @@ endmodule`,
     solutionPattern: 'assign\\s+zero\\s*=\\s*0',
     solutionCode: `module top_module( output zero );
     assign zero = 1'b0;
+endmodule`,
+    testbench: `module testbench;
+  wire zero;
+  top_module dut (.zero(zero));
+
+  initial begin
+    $monitor("Time=%0t | zero=%b", $time, zero);
+    #10;
+    if (zero === 1'b0) $display("SUCCESS: Output is Low");
+    else $display("FAILURE: Output is %b", zero);
+    $finish;
+  end
 endmodule`
   },
 
@@ -78,6 +102,19 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*in',
     solutionCode: `module top_module( input in, output out );
     assign out = in;
+endmodule`,
+    testbench: `module testbench;
+  reg in;
+  wire out;
+  top_module dut (.in(in), .out(out));
+
+  initial begin
+    $monitor("Time=%0t | in=%b out=%b", $time, in, out);
+    in = 0; #10;
+    in = 1; #10;
+    in = 0; #10;
+    $finish;
+  end
 endmodule`
   },
   {
@@ -124,6 +161,20 @@ endmodule`,
     assign x = b;
     assign y = b;
     assign z = c;
+endmodule`,
+    testbench: `module testbench;
+  reg a, b, c;
+  wire w, x, y, z;
+  top_module dut (a,b,c,w,x,y,z);
+
+  initial begin
+    $monitor("T=%0t a=%b b=%b c=%b | w=%b x=%b y=%b z=%b", $time, a,b,c, w,x,y,z);
+    a=0; b=0; c=0; #10;
+    a=1; b=0; c=0; #10;
+    a=0; b=1; c=0; #10;
+    a=0; b=0; c=1; #10;
+    $finish;
+  end
 endmodule`
   },
   {
@@ -147,6 +198,15 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*~\\s*in',
     solutionCode: `module top_module( input in, output out );
     assign out = ~in;
+endmodule`,
+    testbench: `module testbench;
+  reg in; wire out;
+  top_module dut(in, out);
+  initial begin
+    $monitor("in=%b out=%b", in, out);
+    in=0; #5;
+    in=1; #5;
+  end
 endmodule`
   },
   {
@@ -189,6 +249,16 @@ endmodule`,
     
     assign out = ab_comb | cd_comb;
     assign out_n = ~out;
+endmodule`,
+    testbench: `module testbench;
+  reg a,b,c,d; wire out, out_n;
+  top_module dut(a,b,c,d,out,out_n);
+  initial begin
+    $monitor("a=%b b=%b c=%b d=%b | out=%b out_n=%b", a,b,c,d,out,out_n);
+    a=0;b=0;c=0;d=0; #5;
+    a=1;b=1;c=0;d=0; #5;
+    a=0;b=0;c=1;d=1; #5;
+  end
 endmodule`
   },
 
@@ -215,6 +285,17 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*a\\s*&\\s*b',
     solutionCode: `module top_module( input a, input b, output out );
     assign out = a & b;
+endmodule`,
+    testbench: `module testbench;
+  reg a, b; wire out;
+  top_module dut(a, b, out);
+  initial begin
+    $monitor("a=%b b=%b | out=%b", a,b,out);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -237,6 +318,17 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*~\\s*\\(?\\s*a\\s*&\\s*b\\s*\\)?',
     solutionCode: `module top_module( input a, input b, output out );
     assign out = ~(a & b);
+endmodule`,
+    testbench: `module testbench;
+  reg a, b; wire out;
+  top_module dut(a, b, out);
+  initial begin
+    $monitor("a=%b b=%b | out=%b", a,b,out);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -261,6 +353,17 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*a\\s*\\|\\s*b',
     solutionCode: `module top_module( input a, input b, output out );
     assign out = a | b;
+endmodule`,
+    testbench: `module testbench;
+  reg a, b; wire out;
+  top_module dut(a, b, out);
+  initial begin
+    $monitor("a=%b b=%b | out=%b", a,b,out);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -283,6 +386,17 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*~\\s*\\(\\s*a\\s*\\|\\s*b\\s*\\)',
     solutionCode: `module top_module( input a, input b, output out );
     assign out = ~(a | b);
+endmodule`,
+    testbench: `module testbench;
+  reg a, b; wire out;
+  top_module dut(a, b, out);
+  initial begin
+    $monitor("a=%b b=%b | out=%b", a,b,out);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -305,6 +419,17 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*a\\s*\\^\\s*b',
     solutionCode: `module top_module( input a, input b, output out );
     assign out = a ^ b;
+endmodule`,
+    testbench: `module testbench;
+  reg a, b; wire out;
+  top_module dut(a, b, out);
+  initial begin
+    $monitor("a=%b b=%b | out=%b", a,b,out);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -331,6 +456,17 @@ endmodule`,
     solutionPattern: 'assign\\s+out\\s*=\\s*~\\s*\\(?\\s*a\\s*\\^\\s*b\\s*\\)?',
     solutionCode: `module top_module( input a, input b, output out );
     assign out = ~(a ^ b);
+endmodule`,
+    testbench: `module testbench;
+  reg a, b; wire out;
+  top_module dut(a, b, out);
+  initial begin
+    $monitor("a=%b b=%b | out=%b", a,b,out);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -364,6 +500,17 @@ endmodule`,
     output p1y
 );
     assign p1y = (p1a & p1c) | (p1b & p1d);
+endmodule`,
+    testbench: `module testbench;
+  reg p1a, p1b, p1c, p1d; wire p1y;
+  top_module dut(p1a, p1b, p1c, p1d, p1y);
+  initial begin
+    $monitor("abcd=%b%b%b%b | y=%b", p1a,p1b,p1c,p1d, p1y);
+    // Test cases
+    p1a=0; p1c=0; p1b=0; p1d=0; #10;
+    p1a=1; p1c=1; p1b=0; p1d=0; #10; // Left AND true
+    p1a=0; p1c=0; p1b=1; p1d=1; #10; // Right AND true
+  end
 endmodule`
   },
 
@@ -406,6 +553,16 @@ endmodule`,
     assign o2 = vec[2];
     assign o1 = vec[1];
     assign o0 = vec[0];
+endmodule`,
+    testbench: `module testbench;
+  reg [2:0] vec; wire [2:0] outv; wire o2,o1,o0;
+  top_module dut(vec, outv, o2, o1, o0);
+  initial begin
+    $monitor("vec=%b | outv=%b | o2=%b o1=%b o0=%b", vec, outv, o2, o1, o0);
+    vec = 3'b000; #10;
+    vec = 3'b101; #10;
+    vec = 3'b111; #10;
+  end
 endmodule`
   },
   {
@@ -438,6 +595,15 @@ endmodule`,
 );
     assign out_hi = in[15:8];
     assign out_lo = in[7:0];
+endmodule`,
+    testbench: `module testbench;
+  reg [15:0] in; wire [7:0] out_hi, out_lo;
+  top_module dut(in, out_hi, out_lo);
+  initial begin
+    $monitor("in=%h | hi=%h lo=%h", in, out_hi, out_lo);
+    in = 16'h1234; #10;
+    in = 16'hABCD; #10;
+  end
 endmodule`
   },
   {
@@ -469,6 +635,15 @@ endmodule`,
     output [9:0] out
 );
     assign out = {a, b};
+endmodule`,
+    testbench: `module testbench;
+  reg [4:0] a, b; wire [9:0] out;
+  top_module dut(a,b,out);
+  initial begin
+    $monitor("a=%b b=%b | out=%b", a,b,out);
+    a=5'b11111; b=5'b00000; #10;
+    a=5'b10101; b=5'b01010; #10;
+  end
 endmodule`
   },
 
@@ -500,6 +675,17 @@ endmodule`,
     solutionPattern: 'mod_a',
     solutionCode: `module top_module( input a, input b, output out );
     mod_a instance1 ( a, b, out );
+endmodule`,
+    testbench: `module testbench;
+  // Mock mod_a for simulation
+  // Verilog simulations allow multiple modules in one file
+  reg a, b; wire out;
+  top_module dut(a,b,out);
+  initial begin
+     $monitor("a=%b b=%b out=%b", a,b,out);
+     a=0; b=0; #10;
+     a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -535,6 +721,15 @@ endmodule`,
         .in1(a), 
         .in2(b) 
     );
+endmodule`,
+    testbench: `module testbench;
+  reg a, b; wire out;
+  top_module dut(a,b,out);
+  initial begin
+     $monitor("a=%b b=%b out=%b", a,b,out);
+     a=0; b=0; #10;
+     a=1; b=1; #10;
+  end
 endmodule`
   },
 
@@ -568,6 +763,15 @@ endmodule`,
     always @(*) begin
         out = a & b;
     end
+endmodule`,
+    testbench: `module testbench;
+  reg a,b; wire out;
+  top_module dut(a,b,out);
+  initial begin
+     $monitor("a=%b b=%b out=%b", a,b,out);
+     a=0; b=0; #10;
+     a=1; b=1; #10;
+  end
 endmodule`
   },
   {
@@ -611,6 +815,15 @@ endmodule`,
             out = a;
         end
     end
+endmodule`,
+    testbench: `module testbench;
+  reg a,b,sel_b; wire out;
+  top_module dut(a,b,sel_b,out);
+  initial begin
+     $monitor("sel=%b a=%b b=%b | out=%b", sel_b,a,b,out);
+     sel_b=0; a=1; b=0; #10;
+     sel_b=1; a=1; b=0; #10;
+  end
 endmodule`
   },
   {
@@ -655,6 +868,15 @@ endmodule`,
             default: out = 0;
         endcase
     end
+endmodule`,
+    testbench: `module testbench;
+  reg [1:0] sel; reg [3:0] d0, d1; wire [3:0] out;
+  top_module dut(sel, d0, d1, out);
+  initial begin
+     d0=4'hA; d1=4'hB;
+     $monitor("sel=%b out=%h", sel, out);
+     sel=0; #10; sel=1; #10; sel=2; #10;
+  end
 endmodule`
   },
 
@@ -694,6 +916,16 @@ endmodule`,
     assign min_ab = (a < b) ? a : b;
     assign min_cd = (c < d) ? c : d;
     assign min = (min_ab < min_cd) ? min_ab : min_cd;
+endmodule`,
+    testbench: `module testbench;
+  reg [7:0] a,b,c,d; wire [7:0] min;
+  top_module dut(a,b,c,d,min);
+  initial begin
+    a=10; b=20; c=30; d=5;
+    #10;
+    if(min == 5) $display("PASS: min is 5");
+    else $display("FAIL: min is %d", min);
+  end
 endmodule`
   },
   {
@@ -722,6 +954,16 @@ endmodule`,
     output parity
 );
     assign parity = ^in;
+endmodule`,
+    testbench: `module testbench;
+  reg [7:0] in; wire parity;
+  top_module dut(in, parity);
+  initial begin
+     $monitor("in=%b parity=%b", in, parity);
+     in=8'b00000000; #10;
+     in=8'b00000001; #10;
+     in=8'b11111111; #10;
+  end
 endmodule`
   },
 
@@ -747,6 +989,23 @@ endmodule`,
     always @(posedge clk) begin
         q <= d;
     end
+endmodule`,
+    testbench: `module testbench;
+  reg clk, d; wire q;
+  top_module dut(clk, d, q);
+  
+  initial begin
+    clk=0;
+    forever #5 clk = ~clk;
+  end
+
+  initial begin
+    $monitor("T=%0t d=%b q=%b", $time, d, q);
+    d=0; #11; // Miss edge
+    d=1; #10; // Catch edge
+    d=0; #10;
+    $finish;
+  end
 endmodule`
   }
 ];

@@ -19,6 +19,7 @@ export interface Lesson {
   initialCode: string;
   solutionPattern: string; // Regex or keywords to check naively before AI
   solutionCode: string; // The correct code to show after 3 fails
+  testbench: string; // The verification code
 }
 
 export interface ChatMessage {
